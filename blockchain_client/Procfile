@@ -1,1 +1,1 @@
-web: gunicorn blockchain_client:app
+web: gunicorn blockchain_client/blockchain_client:app
