@@ -2,6 +2,7 @@ import pyaes
 from encodings import utf_8
 from flask import Flask, request, jsonify, render_template
 from collections import OrderedDict
+import requests
 from Crypto.Hash import SHA
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
@@ -91,6 +92,48 @@ def make_transaction():
 @app.route('/view/transactions')
 def view_transactions():
     return render_template('view_transactions.html')
+
+
+@app.route('/view/transactions', methods=['POST'])
+def decrypt_transactions():
+    requests.get(request.form['node_url'] + "/nodes/resolve")
+    recipient_private_key = request.form['recipient_private_key']
+    recipient_public_key = request.form['recipient_public_key']
+    response = requests.get(request.form['node_url'] + "/chain")
+    transactions = [transaction
+                    for transactions in response.json()["chain"]
+                    for transaction in transactions['transactions']
+                    ]
+    recipientTransactions = [
+        transaction for transaction in transactions if transaction['recipient_public_key'] == recipient_public_key]
+
+    for singleTransaction in recipientTransactions:
+        r_private_key = serialization.load_der_private_key(
+            bytes.fromhex(recipient_private_key),
+            password=None
+        )
+
+        s_public_key = serialization.load_der_public_key(
+            bytes.fromhex(singleTransaction['sender_public_key'])
+        )
+
+        shared_key = r_private_key.exchange(ec.ECDH(), s_public_key)
+
+        # Perform key derivation.
+        derived_key = HKDF(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=None,
+            info=b'message exhange',
+        ).derive(shared_key)
+
+        cipher = pyaes.AESModeOfOperationCTR(derived_key)
+        decrypted_message = cipher.decrypt(
+            bytes.fromhex(singleTransaction['message']))
+        singleTransaction['decrypted_message'] = str(
+            decrypted_message, encoding='utf-8')
+
+    return jsonify(recipientTransactions), 200
 
 
 @app.route('/wallet/new')
