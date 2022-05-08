@@ -39,15 +39,15 @@
         <div class="row">
             <div class="col-lg-12 text-center">
                 <div class="card-body">
-                    <h4 class="card-title">Wallet Generator</h4>
-                    <p class="card-text">Click on the button below to generate your blockchain wallet</p>
-                    <input type="button" class="btn btn-primary btn-lg" value="Generate Wallet">
+                    <!--<h4 class="card-title">Start Session</h4> -->
+                    <p class="card-text">Click on the button below to generate your Session and blockchain wallet</p>
+                    <input type="button" class="btn btn-primary btn-lg" value="Start Session">
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container">
+    <!--<div class="container">
         <div class="row">
           <label class="col-sm-2">Public Key:</label>
           <div class="col-sm-10">
@@ -78,7 +78,7 @@
           </div>
         </div>
 
-    </div>
+    </div> -->
 
 
 
@@ -96,9 +96,15 @@
                     url: '/wallet/new',
                     type: 'GET',
                     success: function(response) {
+                        /*document.getElementById("public_key").innerHTML = response['public_key'];
+                        document.getElementById("private_key").innerHTML = response['private_key'];
+                        document.getElementById("warning").style.display = "block";*/
+                        localStorage.setItem("public_key", response['public_key']);
+                        localStorage.setItem("private_key",response['private_key']);
+                        $(location).prop('href',"/make/transaction")
                         document.getElementById("public_key").innerHTML = response['public_key'];
                         document.getElementById("private_key").innerHTML = response['private_key'];
-                        document.getElementById("warning").style.display = "block";
+
                     },
                     error: function(error) {
                         console.log(error);

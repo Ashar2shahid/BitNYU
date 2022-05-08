@@ -98,6 +98,12 @@
   <script src="/static/vendor/DataTables/js/ellipsis.js"></script>
 
   <script>
+      $(document).ready(function(){
+            //console.log(localStorage.getItem("public_key"));
+            document.getElementById("recipient_public_key").value = localStorage.getItem("public_key");
+        document.getElementById("recipient_private_key").value = localStorage.getItem("private_key");});
+
+
     $(function () {
       $("#decrypt_transactions").click(function () {
         $.ajax({
@@ -107,26 +113,30 @@
           data: $('#transaction_form').serialize(),
           success: function (response) {
 
-            console.log(response);
+            //console.log(response[0]["recipient_public_key"]);
             //Generate Transactions Table
-            var transactions = [];
-            count = 1;
+              let transactions = [];
+              let count = 1;
 
-            for (i = 0; i < response.length; i++) {
+              //let transaction;
+              for (i = 0; i < response.length; i++) {
+                  let temp = response[0];
+                  console.log(temp);
+                  let transaction = [count,
+                      response[i]["recipient_public_key"],
+                      response[i]["sender_public_key"],
+                      response[i]["message"],
+                      response[i]["decrypted_message"],
+                  ];
+                  transactions.push(transaction);
+                  count += 1;
+              };
 
-              transaction = [count,
-                response[i]["recipient_public_key"],
-                response[i]["sender_public_key"],
-                response[i]["message"],
-                response[i]["decrypted_message"],
-              ];
-              transactions.push(transaction);
-              count += 1;
-            };
+              //console.log(transactions);
 
             // Restrict a column to 10 characters, do split words
             $('#transactions_table').dataTable({
-              "scrollY": 500,
+              "scrollY": true,
               "scrollX": true,
               data: transactions,
               columns: [{ title: "#" },
