@@ -300,4 +300,4 @@ if __name__ == '__main__':
                         type=int, help="port to listen to")
     args = parser.parse_args()
     port = args.port
-    app.run(threaded=True, port=port)
+    app.run(threaded=True, port=port, debug=True)
