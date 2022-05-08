@@ -1,9 +1,10 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Blockchain Client</title>
 
@@ -13,6 +14,7 @@
     <link rel="stylesheet" href="/static/css/custom.css">
 
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -47,38 +49,38 @@
         </div>
     </div>
 
-    <!--<div class="container">
+    <div class="container">
         <div class="row">
-          <label class="col-sm-2">Public Key:</label>
-          <div class="col-sm-10">
-            <textarea id="public_key" rows="5" class="form-control" readonly></textarea>
-          </div>
+            <label class="col-sm-2">Public Key:</label>
+            <div class="col-sm-10">
+                <textarea id="public_key" rows="5" class="form-control" readonly></textarea>
+            </div>
         </div>
 
         <br>
 
         <div class="row">
-          <label class="col-sm-2">Private Key:</label>
-          <div class="col-sm-10">
-            <textarea id="private_key" rows="5" class="form-control" readonly></textarea>
-          </div>
+            <label class="col-sm-2">Private Key:</label>
+            <div class="col-sm-10">
+                <textarea id="private_key" rows="5" class="form-control" readonly></textarea>
+            </div>
         </div>
 
         <br>
 
         <div class="row" id="warning" style="display:none">
-          <div class="col-sm-12">
-            <div class="alert alert-danger" role="alert">
-              IMPORTANT
-              <ul>
-                <li>Save you private and public keys. These keys cannot be recovered!</li>
-                <li>Don't share your private key with anyone!</li>
-              </ul>
+            <div class="col-sm-12">
+                <div class="alert alert-danger" role="alert">
+                    IMPORTANT
+                    <ul>
+                        <li>Save you private and public keys. These keys cannot be recovered!</li>
+                        <li>Don't share your private key with anyone!</li>
+                    </ul>
+                </div>
             </div>
-          </div>
         </div>
 
-    </div> -->
+    </div>
 
 
 
@@ -89,24 +91,29 @@
     <script src="/static/vendor/DataTables/js/ellipsis.js"></script>
 
     <script>
-        $(function() {
-            $('input').click(function() {
+
+        $(document).ready(function () {
+            document.getElementById("public_key").innerHTML = localStorage.getItem("public_key");
+            document.getElementById("private_key").innerHTML = localStorage.getItem("private_key");
+        });
+
+        $(function () {
+            $('input').click(function () {
 
                 $.ajax({
                     url: '/wallet/new',
                     type: 'GET',
-                    success: function(response) {
+                    success: function (response) {
                         /*document.getElementById("public_key").innerHTML = response['public_key'];
                         document.getElementById("private_key").innerHTML = response['private_key'];
                         document.getElementById("warning").style.display = "block";*/
                         localStorage.setItem("public_key", response['public_key']);
-                        localStorage.setItem("private_key",response['private_key']);
-                        $(location).prop('href',"/make/transaction")
+                        localStorage.setItem("private_key", response['private_key']);
                         document.getElementById("public_key").innerHTML = response['public_key'];
                         document.getElementById("private_key").innerHTML = response['private_key'];
 
                     },
-                    error: function(error) {
+                    error: function (error) {
                         console.log(error);
                     }
                 });
@@ -116,4 +123,5 @@
     </script>
 
 </body>
+
 </html>
